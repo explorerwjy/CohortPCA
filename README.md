@@ -10,9 +10,12 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 What things you need to install the software and how to install them
 sklearn
-EIG-7.2.0
+	pip install -U sklearn 
+EIGENSOFT 
+	https://github.com/DReichLab/EIG.git
 PLINK
-Reference VCF file.
+	https://www.cog-genomics.org/plink2
+Reference VCF file and reference panel.
 
 ```
 Give examples
@@ -76,7 +79,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Jiayao Wang** - *Initial work* - [explorerwjy](https://github.com/explorerwjy)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
