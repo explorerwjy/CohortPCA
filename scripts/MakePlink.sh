@@ -12,8 +12,9 @@ if [[ $SamLen -lt 500 ]]; then
     rm -f $BbfNam.tmp*
 else
     mkdir -p TempSplit
-    split --additional-suffix=.list -l 500 $SamLst $OutNam.samples.split.
-    for i in $OutNam.samples.split.*.list; do
+    #split --additional-suffix=.list -l 500 $SamLst $OutNam.samples.split.
+    split -l 500 $SamLst $OutNam.samples.split.
+    for i in $OutNam.samples.split.*; do
 		vcftools --gzvcf $VcfFil --keep $i --exclude ExcludeSNP.list --plink --out TempSplit/${i/.list/} &
         #vcftools --gzvcf $VcfFil --keep $i --plink --out TempSplit/${i/.list/}
         plink --file TempSplit/${i/.list/} --make-bed --out TempSplit/${i/.list/}

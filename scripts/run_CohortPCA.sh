@@ -11,7 +11,7 @@ ExmAdHoc.5.VCF_PCA.sh -i <InputFile> -l <logfile> -H
 "
 
 #Variables
-COHORTPCA=
+COHORTPCA="$HOME/software_pkg/CohortPCA/"
 
 SamOnly="false"
 while getopts i:r:o:b:H opt; do
@@ -24,11 +24,15 @@ done
 
 #some variables
 EXOMFILT=$COHORTPCA/scripts/Filter_For_PCA.py
-source $RefFil
-echo $HapMapReference
+HapMapReference=$COHORTPCA/data/1KG.XGEN.vcf.gz
+#source $RefFil
 
 
-InpFil=`readlink -f $InpFil`
+if [[ ! -e "$InpFil" ]] || [[ ! -e "$HapMapReference" ]];then
+	echo "Plase make sure input file and required files are exists"
+	exit
+fi
+
 if [[ -z "$OutNam" ]];then OutNam=`basename $InpFil`; OutNam=${OutNam/.bed/}; OutNam=${OutNam/.vcf/}; fi # a name for the output files
 
 LogFil=$OutNam.PCA.log
@@ -37,13 +41,11 @@ LogFil=$OutNam.PCA.log
 if [[ "${InpFil##*.}" != "bed" ]]; then
     VCFFil=`readlink -f $InpFil`
     BbfNam=$OutNam
-    #filter the VCF for common variants by rsid
-    #$EXOMFILT/ExmFilt.0.FilterbyrsID.py -v $VcfFil -o $BbfNam
    if [ ! -f $BbfNam.filter.aaf.vcf.gz  ]; then
 	   FilteredOut=$(basename ${VCFFil}).filtered.vcf
 	   echo `pwd`
-	   echo $EXOMFILT -v $VCFFil -o $FilteredOut -c $HapMapReference
-	   $EXOMFILT -v $VCFFil -o $FilteredOut -c $HapMapReference
+	   echo python $EXOMFILT -v $VCFFil -o $FilteredOut -c $HapMapReference
+	   python $EXOMFILT -v $VCFFil -o $FilteredOut -c $HapMapReference
 	   mkdir sort_$(basename ${VCFFil})
 	   vcf-sort $FilteredOut  -t ./sort_$(basename ${VCFFil}) > $BbfNam.filter.aaf.vcf
     VcfFil=$BbfNam.filter.aaf.vcf
@@ -71,8 +73,10 @@ if [[ "${InpFil##*.}" != "bed" ]]; then
 		echo "PLINK THE CASE"
 		echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
         mkdir -p TempSplit
-        split --additional-suffix=.list -l 500 $SamLst $OutNam.samples.split.
-        for i in $OutNam.samples.split.*.list; do
+        #split --additional-suffix=.list -l 500 $SamLst $OutNam.samples.split.
+        split -l 500 $SamLst $OutNam.samples.split.
+
+        for i in $OutNam.samples.split.*; do
 			echo $i
             echo vcftools --gzvcf $VcfFil --keep $i --exclude ExcludeSNPs.list --plink --out TempSplit/${i/.list/} &
             vcftools --gzvcf $VcfFil --keep $i --exclude ExcludeSNPs.list --plink --out TempSplit/${i/.list/} &
@@ -112,7 +116,6 @@ SnpList=plink.prune.in
 bash $COHORTPCA/scripts/MakePlink.sh 1KG.vcf
 HapMapDat=1KG.Exome.SNP.Common
 
-#HapMapDat=$HapMapReference #$OutNam"_HapMapData"
 echo $HapMapDat
 if [[ $? -ne 0 ]]; then exit; fi
 echo
