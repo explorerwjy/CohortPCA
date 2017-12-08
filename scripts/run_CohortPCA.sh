@@ -10,11 +10,13 @@ ExmAdHoc.5.VCF_PCA.sh -i <InputFile> -l <logfile> -H
      -H (flag) - echo this message and exit
 "
 
+#Variables
+COHORTPCA=
+
 SamOnly="false"
 while getopts i:r:o:b:H opt; do
     case "$opt" in
         i) InpFil="$OPTARG";;
-        r) RefFil="$OPTARG";;
         o) OutNam="$OPTARG";;
         H) echo "$usage"; exit;;
   esac
@@ -107,8 +109,8 @@ SnpList=plink.prune.in
 
 
 # Get HapMap data
-bash /home/local/users/jw/resources/AncestryPCA/PLINK/MakePlink.sh 1KG.vcf
-HapMapDat=1KG.XGEN.SNP.Common
+bash $COHORTPCA/scripts/MakePlink.sh 1KG.vcf
+HapMapDat=1KG.Exome.SNP.Common
 
 #HapMapDat=$HapMapReference #$OutNam"_HapMapData"
 echo $HapMapDat
@@ -172,7 +174,7 @@ echo $CMD
 eval $CMD
 if [ -f "$folder/$OutNam.plus.HapMap.eval" ] && [ -f "$folder/$OutNam.plus.HapMap.pca.evec"  ]; then
 	#Rscript $HOME/CUMC/PCA_plot.R "${folder}/"  "$OutNam.plus.HapMap"
-	python /home/local/users/jw/CUMC/Exome-Plots-Jiayao/PlotAncestryPCA.py -s $OutNam.plus.HapMap
+	python $COHORTPCA/scripts/PlotAncestryPCA.py -s $OutNam.plus.HapMap
 fi
 
 if [[ -e $BbfNam.fam.pcabkp ]]; then mv $BbfNam.fam.pcabkp $BbfNam.fam; fi

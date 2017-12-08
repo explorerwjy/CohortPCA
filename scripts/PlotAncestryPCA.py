@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import random
 from mpl_toolkits.mplot3d import Axes3D
+from CohortPCA import CohortPCA
 fontsize = 15
 
 ControlDefault="/home/local/users/jw/resources/AncestryPCA/resources/1KG_AJ_Domi_PCAcontrol.vcf.gz"
@@ -23,12 +24,13 @@ class Evec:
 		self.Partition = row[-1]
 		self.EigenValues = row[1:-1]
 
-class PloyAncestryPCA:
-	def __init__(self, ControlPanel, SampleEVEC, SampleEVAL):
-		self.Name = SampleEVEC.split("/")[-1].split(".")[0]
-		self.ControlPanelFil = ControlPanel
-		self.EvecFil = SampleEVEC
-		self.EvalFil = SampleEVAL
+class PlotAncestryPCA:
+	def __init__(self,args): 
+		self.Name = args.prefix.split("/")[-1].split(".")[0]
+		self.ControlPanelFil = args.control 
+		self.EvecFil = args.evec #SampleEVEC
+		self.EvalFil = args.eval #SampleEVAL
+		self.predict = args.predict
 
 	def run(self):
 		self.loadControlPanel()
@@ -36,6 +38,12 @@ class PloyAncestryPCA:
 		self.loadEigenValue()
 		self.Plot(self.Name)
 		self.Plot3D(self.Name)
+		if self.predict:
+			instance = CohortPCA(self.ControlPanelFil, self.EvecFil)
+			instance.loadControlPanel()
+			instance.loadEigenValue()
+			Output = "{}.PopulationPrediction.txt".format(self.Name)
+			instance.MarkCases(Output)
 
 	def loadControlPanel(self):
 		# sample  pop     super_pop       gender
@@ -156,16 +164,13 @@ class PloyAncestryPCA:
 			pdf.savefig()
 			plt.close()
 
-
 def GetOptions():
-	#ControlPanel = "integrated_call_samples_v3.20130502.ALL.panel"
-	#EVEC = "data/RGN.plus.HapMap.pca.evec"
-	#EVAL = "data/RGN.plus.HapMap.eval"
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-s', '--prefix', type=str, help='Prefix of PCA results')
 	parser.add_argument('-c', '--control', type=str, default=IndvPanelDefault, help='Control Panel')
 	parser.add_argument('--evec', type=str, help='EigenValue Evaluation File')
 	parser.add_argument('--eval', type=str, help='Sample EigenVector Files')
+	parser.add_argument('--predict', type=bool, default=True, help='Run population prediction or not')
 	args = parser.parse_args()
 	if args.prefix == None and (args.evec == None or args.eval == None):
 		print "Missing Input Data. Please see help"
@@ -173,11 +178,14 @@ def GetOptions():
 	if args.prefix != None:
 		args.evec = "%s.%s"%(args.prefix, "pca.evec")
 		args.eval = "%s.%s"%(args.prefix, "eval")
-	return args.control, args.evec, args.eval
+	#return args.control, args.evec, args.eval
+	return args
 
 def main():
-	ControlPanel, SampleEVEC, SampleEVAL = GetOptions()
-	instance = PloyAncestryPCA(ControlPanel, SampleEVEC, SampleEVAL)
+	#ControlPanel, SampleEVEC, SampleEVAL = GetOptions()
+	args = GetOptions()
+	#instance = PloyAncestryPCA(ControlPanel, SampleEVEC, SampleEVAL)
+	instance = PlotAncestryPCA(args)
 	instance.run()
 
 if __name__ == '__main__':

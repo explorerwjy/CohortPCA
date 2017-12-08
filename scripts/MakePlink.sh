@@ -1,6 +1,6 @@
 #VcfFil=/home/local/users/jw/resources/AncestryPCA/resources/1KG.SNP.Common.Coding.vcf.gz
 VcfFil=$1
-OutNam=1KG.XGEN.SNP.Common
+OutNam=1KG.Exome.SNP.Common
 BbfNam=$OutNam
 SamLst=$OutNam.samples.list
 touch ExcludeSNP.list 
