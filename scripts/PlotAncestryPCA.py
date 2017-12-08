@@ -11,8 +11,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from CohortPCA import CohortPCA
 fontsize = 15
 
-ControlDefault="/home/local/users/jw/resources/AncestryPCA/resources/1KG_AJ_Domi_PCAcontrol.vcf.gz"
-IndvPanelDefault="/home/local/users/jw/resources/AncestryPCA/resources/AncestryPCA.master.panel"
+#ControlDefault="/home/local/users/jw/resources/AncestryPCA/resources/1KG_AJ_Domi_PCAcontrol.vcf.gz"
+#IndvPanelDefault="/home/local/users/jw/resources/AncestryPCA/resources/AncestryPCA.master.panel"
 
 class Control:
 	def __init__(self, row):
@@ -167,7 +167,7 @@ class PlotAncestryPCA:
 def GetOptions():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-s', '--prefix', type=str, help='Prefix of PCA results')
-	parser.add_argument('-c', '--control', type=str, default=IndvPanelDefault, help='Control Panel')
+	parser.add_argument('-c', '--control', type=str, help='Control Panel')
 	parser.add_argument('--evec', type=str, help='EigenValue Evaluation File')
 	parser.add_argument('--eval', type=str, help='Sample EigenVector Files')
 	parser.add_argument('--predict', type=bool, default=True, help='Run population prediction or not')

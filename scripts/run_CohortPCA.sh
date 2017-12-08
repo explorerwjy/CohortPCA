@@ -11,7 +11,7 @@ ExmAdHoc.5.VCF_PCA.sh -i <InputFile> -l <logfile> -H
 "
 
 #Variables
-COHORTPCA="$HOME/software_pkg/CohortPCA/"
+COHORTPCA="$HOME/software_pkg/CohortPCA/" #PATH_TO_CohortPCA
 
 SamOnly="false"
 while getopts i:r:o:b:H opt; do
@@ -176,8 +176,7 @@ CMD="smartpca.perl -i $OutNam.eigenstratgeno -a $OutNam.snp -b $OutNam.ind -k 10
 echo $CMD
 eval $CMD
 if [ -f "$folder/$OutNam.plus.HapMap.eval" ] && [ -f "$folder/$OutNam.plus.HapMap.pca.evec"  ]; then
-	#Rscript $HOME/CUMC/PCA_plot.R "${folder}/"  "$OutNam.plus.HapMap"
-	python $COHORTPCA/scripts/PlotAncestryPCA.py -s $OutNam.plus.HapMap
+	python $COHORTPCA/scripts/PlotAncestryPCA.py -s $OutNam.plus.HapMap -c $COHORTPCA/data/AncestryPCA.master.panel 
 fi
 
 if [[ -e $BbfNam.fam.pcabkp ]]; then mv $BbfNam.fam.pcabkp $BbfNam.fam; fi
