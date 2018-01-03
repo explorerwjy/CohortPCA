@@ -1,4 +1,11 @@
 #!/bin/bash
+#$ -S /bin/bash
+#$ -j y
+#$ -N PCA 
+#$ -l h_rt=256:00:00
+#$ -l h_vmem=50G
+#$ -cwd
+
 ###############################################################
 # PCA for population structure
 # Jiayao Wang 0815 2017
@@ -27,13 +34,16 @@ EXOMFILT=$COHORTPCA/scripts/Filter_For_PCA.py
 HapMapReference=$COHORTPCA/data/1KG.XGEN.vcf.gz
 #source $RefFil
 
-
+InpFil=$(readlink -f $InpFil)
 if [[ ! -e "$InpFil" ]] || [[ ! -e "$HapMapReference" ]];then
 	echo "Plase make sure input file and required files are exists"
 	exit
 fi
 
 if [[ -z "$OutNam" ]];then OutNam=`basename $InpFil`; OutNam=${OutNam/.bed/}; OutNam=${OutNam/.vcf/}; fi # a name for the output files
+
+DIR="PCA.${OutNam}"
+mkdir -p $DIR; cd $DIR 
 
 LogFil=$OutNam.PCA.log
 
